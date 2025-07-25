@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-income-engine
+spec:
+  replicas: 20
+  selector:
+    matchLabels:
+      app: ai-engine
+  template:
+    metadata:
+      labels:
+        app: ai-engine
+    spec:
+      containers:
+      - name: ai-engine
+        image: your-registry/ai-income-engine:latest
+        envFrom:
+        - secretRef:
+            name: ai-engine-secrets
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-engine-lb
+spec:
+  type: LoadBalancer
+  selector:
+    app: ai-engine
+  ports:
+  - port: 80
+    targetPort: 3000
